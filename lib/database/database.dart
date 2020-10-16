@@ -22,7 +22,7 @@ class StudentDriversDatabase {
   static Lock lock = Lock();
 
   static Future<AppDatabase> get instance async {
-    lock.synchronized(() async {
+    await lock.synchronized(() async {
       _instance ??=
           await $FloorAppDatabase.databaseBuilder('app_database.db').build();
     });
