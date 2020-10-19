@@ -145,20 +145,15 @@ class _$StudentDriversDao extends StudentDriversDao {
   final DeletionAdapter<StudentDriver> _studentDriverDeletionAdapter;
 
   @override
-  Future<StudentDriver> queryWord(int id) async {
+  Future<StudentDriver> queryStudents(int student) async {
     return _queryAdapter.query('SELECT * from student_drivers WHERE id = ?',
-        arguments: <dynamic>[id], mapper: _student_driversMapper);
+        arguments: <dynamic>[student], mapper: _student_driversMapper);
   }
 
   @override
-  Future<List<StudentDriver>> queryAllWords() async {
+  Future<List<StudentDriver>> queryAllStudents() async {
     return _queryAdapter.queryList('SELECT * from student_drivers',
         mapper: _student_driversMapper);
-  }
-
-  @override
-  Future<void> clear() async {
-    await _queryAdapter.queryNoReturn('DELETE * FROM students_drivers');
   }
 
   @override
@@ -168,8 +163,8 @@ class _$StudentDriversDao extends StudentDriversDao {
   }
 
   @override
-  Future<void> update(StudentDriver word) async {
-    await _studentDriverUpdateAdapter.update(word, OnConflictStrategy.abort);
+  Future<void> update(StudentDriver student) async {
+    await _studentDriverUpdateAdapter.update(student, OnConflictStrategy.abort);
   }
 
   @override
