@@ -145,9 +145,9 @@ class _$StudentDriversDao extends StudentDriversDao {
   final DeletionAdapter<StudentDriver> _studentDriverDeletionAdapter;
 
   @override
-  Future<StudentDriver> queryStudents(int student) async {
+  Future<StudentDriver> queryStudents(int id) async {
     return _queryAdapter.query('SELECT * from student_drivers WHERE id = ?',
-        arguments: <dynamic>[student], mapper: _student_driversMapper);
+        arguments: <dynamic>[id], mapper: _student_driversMapper);
   }
 
   @override
