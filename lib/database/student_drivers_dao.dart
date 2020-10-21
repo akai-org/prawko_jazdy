@@ -1,18 +1,19 @@
 import 'package:floor/floor.dart' as floor;
+import 'package:floor/floor.dart';
 
 import 'models/StudentDriverModel.dart';
 
 // build db after changes - flutter packages pub run build_runner build
 
-@floor.dao
+@dao
 abstract class StudentDriversDao {
-  @floor.insert
+  @insert
   Future<void> insertStudent(StudentDriver student);
 
-  @floor.Query('SELECT * from student_drivers WHERE id = :id')
+  @Query('SELECT * from student_drivers WHERE id = :id')
   Future<StudentDriver> queryStudents(int id);
 
-  @floor.Query('SELECT * from student_drivers')
+  @Query('SELECT * from student_drivers')
   Future<List<StudentDriver>> queryAllStudents();
 
   @floor.delete
