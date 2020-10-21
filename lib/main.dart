@@ -3,26 +3,29 @@ import 'package:prawkojazdy/pages/LessonAddPage.dart';
 
 import 'package:prawkojazdy/pages/StudentDriverListPage.dart';
 import 'package:prawkojazdy/pages/StudentDriverAddPage.dart';
-import 'package:prawkojazdy/pages/StudentDriverSummaryPage.dart';
+import 'package:prawkojazdy/pages/StudentDriverDetailsPage.dart';
 
 void main() => runApp(new MyApp());
 
 final routes = {
   //Lista kursantów
-  '/': (BuildContext context) => new StudentDriverListPage(),
+  StudentDriverListPage.routeName: (BuildContext context) =>
+      new StudentDriverListPage(),
   //Dodanie kursanta
-  '/studentdriver/add': (BuildContext context) => new StudentDriverAddPage(),
+  StudentDriverAddPage.routeName: (BuildContext context) =>
+      new StudentDriverAddPage(),
   //Szczegóły kursanta (w tym lista jazd)
-  '/studentdriver': (BuildContext context) => new StudentDriverSummaryPage(),
+  StudentDriverDetailsPage.routeName: (BuildContext context) =>
+      new StudentDriverDetailsPage(),
   //Dodanie jazdy kursanta
-  '/lessons/add': (BuildContext context) => new LessonAddPage(),
+  LessonAddPage.routeName: (BuildContext context) => new LessonAddPage(),
 };
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      initialRoute: '/',
+      initialRoute: StudentDriverListPage.routeName,
       title: 'Prawko Jazdy',
       theme: new ThemeData(
         primarySwatch: Colors.blue,

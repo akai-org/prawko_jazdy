@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LessonAddPage extends StatelessWidget {
+  static const routeName = "/studentDriever/addLesson";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
