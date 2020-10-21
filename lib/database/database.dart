@@ -24,10 +24,16 @@ class StudentDriversDatabase {
   static AppDatabase _instance;
   static Lock lock = Lock();
 
+  static final migration1to2 = Migration(1, 2, (database) async {
+    await database.execute('CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER)');
+  });
+
   static Future<AppDatabase> get instance async {
     await lock.synchronized(() async {
       _instance ??=
-          await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+          await $FloorAppDatabase.databaseBuilder('app_database.db')
+              .addMigrations([migration1to2])
+              .build();
     });
     return _instance;
   }

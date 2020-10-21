@@ -1,9 +1,19 @@
 import 'package:floor/floor.dart';
+import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 
 // build db after changes - flutter packages pub run build_runner build
 
 // data model class
-@Entity(tableName: 'student_driven_time')
+@Entity(
+  tableName: 'student_driven_time',
+  foreignKeys: [
+    ForeignKey(
+      childColumns: ['studentId'],
+      parentColumns: ['id'],
+      entity: StudentDriver,
+    )
+  ]
+)
 class DrivenTime {
   @PrimaryKey(autoGenerate: true)
   final int id;
