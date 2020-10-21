@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:floor/floor.dart';
+import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
+import 'package:prawkojazdy/database/student_driven_time_dao.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:synchronized/synchronized.dart';
 
@@ -9,9 +11,10 @@ import 'student_drivers_dao.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 1, entities: [StudentDriver])
+@Database(version: 2, entities: [StudentDriver, DrivenTime])
 abstract class AppDatabase extends FloorDatabase {
   StudentDriversDao get studentDao;
+  DrivenTimeDao get drivenTimeDao;
 }
 
 // db singleton
