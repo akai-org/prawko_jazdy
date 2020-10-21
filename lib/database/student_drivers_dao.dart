@@ -10,14 +10,14 @@ abstract class StudentDriversDao {
   Future<void> insertStudent(StudentDriver student);
 
   @floor.Query('SELECT * from student_drivers WHERE id = :id')
-  Future<StudentDriver> queryWord(int id);
+  Future<StudentDriver> queryStudents(int id);
 
   @floor.Query('SELECT * from student_drivers')
-  Future<List<StudentDriver>> queryAllWords();
+  Future<List<StudentDriver>> queryAllStudents();
 
   @floor.delete
   Future<void> delete(StudentDriver student);
 
   @floor.update
-  Future<void> update(StudentDriver word);
+  Future<void> update(StudentDriver student);
 }
