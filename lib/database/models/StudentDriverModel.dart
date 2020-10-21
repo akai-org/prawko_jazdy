@@ -1,37 +1,22 @@
-// database table and column names
-final String table = 'student_drivers';
-final String columnId = '_id';
-final String columnFirstName = 'first_name';
-final String columnLastName = 'last_name';
-final String columnCategory = 'category';
+import 'package:floor/floor.dart';
+
+// build db after changes - flutter packages pub run build_runner build
 
 // data model class
+@Entity(tableName: 'student_drivers')
 class StudentDriver {
-  int id;
-  String first_name;
-  String last_name;
-  String category;
+  @PrimaryKey(autoGenerate: true)
+  final int id;
+  @ColumnInfo(name: 'first_name')
+  final String firstName;
+  @ColumnInfo(name: 'last_name')
+  final String lastName;
+  final String category;
 
-  StudentDriver();
+  StudentDriver(this.id, this.firstName, this.lastName, this.category);
 
-  // convenience constructor to create a Word object
-  StudentDriver.fromMap(Map<String, dynamic> map) {
-    id = map[columnId];
-    first_name = map[columnFirstName];
-    last_name = map[columnLastName];
-    category = map[columnCategory];
-  }
-
-  // convenience method to create a Map from this Word object
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      columnFirstName: first_name,
-      columnLastName: last_name,
-      columnCategory: category
-    };
-    if (id != null) {
-      map[columnId] = id;
-    }
-    return map;
+  @override
+  String toString() {
+    return '$id $firstName $lastName $category';
   }
 }
