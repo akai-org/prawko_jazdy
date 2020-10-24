@@ -31,6 +31,7 @@ dependencies:
   floor: ^0.17.0
   path_provider: ^1.6.10
   synchronized: ^2.2.0+2
+  flutter_slidable: ^0.5.7
 
 dev_dependencies:
   floor_generator: ^0.17.0
