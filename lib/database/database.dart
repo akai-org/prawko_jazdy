@@ -1,17 +1,23 @@
 import 'dart:async';
 
 import 'package:floor/floor.dart';
+import 'package:prawkojazdy/database/DrivenTimeDao.dart';
+import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
 import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:synchronized/synchronized.dart';
 
+import 'converters/DateTimeConverter.dart';
 import 'models/StudentDriverModel.dart';
-import 'student_drivers_dao.dart';
+import 'StudentDriversDao.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
-@Database(version: 1, entities: [StudentDriver])
+
+@TypeConverters([DateTimeConverter])
+@Database(version:  3, entities: [StudentDriver, DrivenTime])
 abstract class AppDatabase extends FloorDatabase {
   StudentDriversDao get studentDao;
+  DrivenTimeDao get drivenTimeDao;
 }
 
 // db singleton
@@ -25,11 +31,16 @@ class StudentDriversDatabase {
     await database.execute('CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER)');
   });
 
+  static final migration2to3 = Migration(2, 3, (database) async {
+    await database.execute("DROP TABLE student_driven_time");
+    await database.execute("CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)");
+  });
+
   static Future<AppDatabase> get instance async {
     await lock.synchronized(() async {
       _instance ??=
           await $FloorAppDatabase.databaseBuilder('app_database.db')
-              .addMigrations([migration1to2])
+              .addMigrations([migration1to2, migration2to3])
               .build();
     });
     return _instance;

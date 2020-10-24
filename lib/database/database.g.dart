@@ -62,10 +62,12 @@ class _$AppDatabase extends AppDatabase {
 
   StudentDriversDao _studentDaoInstance;
 
+  DrivenTimeDao _drivenTimeDaoInstance;
+
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
       },
@@ -81,6 +83,8 @@ class _$AppDatabase extends AppDatabase {
       onCreate: (database, version) async {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `student_drivers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `category` TEXT)');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -92,6 +96,11 @@ class _$AppDatabase extends AppDatabase {
   StudentDriversDao get studentDao {
     return _studentDaoInstance ??=
         _$StudentDriversDao(database, changeListener);
+  }
+
+  @override
+  DrivenTimeDao get drivenTimeDao {
+    return _drivenTimeDaoInstance ??= _$DrivenTimeDao(database, changeListener);
   }
 }
 
@@ -134,10 +143,6 @@ class _$StudentDriversDao extends StudentDriversDao {
 
   final QueryAdapter _queryAdapter;
 
-  static final _student_driversMapper = (Map<String, dynamic> row) =>
-      StudentDriver(row['id'] as int, row['first_name'] as String,
-          row['last_name'] as String, row['category'] as String);
-
   final InsertionAdapter<StudentDriver> _studentDriverInsertionAdapter;
 
   final UpdateAdapter<StudentDriver> _studentDriverUpdateAdapter;
@@ -147,13 +152,22 @@ class _$StudentDriversDao extends StudentDriversDao {
   @override
   Future<StudentDriver> queryStudents(int id) async {
     return _queryAdapter.query('SELECT * from student_drivers WHERE id = ?',
-        arguments: <dynamic>[id], mapper: _student_driversMapper);
+        arguments: <dynamic>[id],
+        mapper: (Map<String, dynamic> row) => StudentDriver(
+            row['id'] as int,
+            row['first_name'] as String,
+            row['last_name'] as String,
+            row['category'] as String));
   }
 
   @override
   Future<List<StudentDriver>> queryAllStudents() async {
     return _queryAdapter.queryList('SELECT * from student_drivers',
-        mapper: _student_driversMapper);
+        mapper: (Map<String, dynamic> row) => StudentDriver(
+            row['id'] as int,
+            row['first_name'] as String,
+            row['last_name'] as String,
+            row['category'] as String));
   }
 
   @override
@@ -172,3 +186,95 @@ class _$StudentDriversDao extends StudentDriversDao {
     await _studentDriverDeletionAdapter.delete(student);
   }
 }
+
+class _$DrivenTimeDao extends DrivenTimeDao {
+  _$DrivenTimeDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _drivenTimeInsertionAdapter = InsertionAdapter(
+            database,
+            'student_driven_time',
+            (DrivenTime item) => <String, dynamic>{
+                  'id': item.id,
+                  'studentId': item.studentId,
+                  'lesson_start_time':
+                      _dateTimeConverter.encode(item.lessonStartTime),
+                  'lesson_duration':
+                      _dateTimeConverter.encode(item.lessonDuration)
+                }),
+        _drivenTimeUpdateAdapter = UpdateAdapter(
+            database,
+            'student_driven_time',
+            ['id'],
+            (DrivenTime item) => <String, dynamic>{
+                  'id': item.id,
+                  'studentId': item.studentId,
+                  'lesson_start_time':
+                      _dateTimeConverter.encode(item.lessonStartTime),
+                  'lesson_duration':
+                      _dateTimeConverter.encode(item.lessonDuration)
+                }),
+        _drivenTimeDeletionAdapter = DeletionAdapter(
+            database,
+            'student_driven_time',
+            ['id'],
+            (DrivenTime item) => <String, dynamic>{
+                  'id': item.id,
+                  'studentId': item.studentId,
+                  'lesson_start_time':
+                      _dateTimeConverter.encode(item.lessonStartTime),
+                  'lesson_duration':
+                      _dateTimeConverter.encode(item.lessonDuration)
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<DrivenTime> _drivenTimeInsertionAdapter;
+
+  final UpdateAdapter<DrivenTime> _drivenTimeUpdateAdapter;
+
+  final DeletionAdapter<DrivenTime> _drivenTimeDeletionAdapter;
+
+  @override
+  Future<DrivenTime> queryStudents(int id) async {
+    return _queryAdapter.query('SELECT * from student_driven_time WHERE id = ?',
+        arguments: <dynamic>[id],
+        mapper: (Map<String, dynamic> row) => DrivenTime(
+            row['id'] as int,
+            row['studentId'] as int,
+            _dateTimeConverter.decode(row['lesson_start_time'] as int),
+            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+  }
+
+  @override
+  Future<List<DrivenTime>> queryAllStudents() async {
+    return _queryAdapter.queryList('SELECT * from student_driven_time',
+        mapper: (Map<String, dynamic> row) => DrivenTime(
+            row['id'] as int,
+            row['studentId'] as int,
+            _dateTimeConverter.decode(row['lesson_start_time'] as int),
+            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+  }
+
+  @override
+  Future<void> insertTime(DrivenTime drivenTime) async {
+    await _drivenTimeInsertionAdapter.insert(
+        drivenTime, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> update(DrivenTime drivenTime) async {
+    await _drivenTimeUpdateAdapter.update(drivenTime, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> delete(DrivenTime drivenTime) async {
+    await _drivenTimeDeletionAdapter.delete(drivenTime);
+  }
+}
+
+// ignore_for_file: unused_element
+final _dateTimeConverter = DateTimeConverter();
