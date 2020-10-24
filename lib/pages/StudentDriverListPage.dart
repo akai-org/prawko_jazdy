@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:prawkojazdy/args/StudentDetailsArgs.dart';
 import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
-import 'package:prawkojazdy/database/student_drivers_dao.dart';
+import 'package:prawkojazdy/database/StudentDriversDao.dart';
 import 'package:prawkojazdy/pages/StudentDriverDetailsPage.dart';
 
 import 'StudentDriverAddPage.dart';
