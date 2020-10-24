@@ -239,7 +239,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
   final DeletionAdapter<DrivenTime> _drivenTimeDeletionAdapter;
 
   @override
-  Future<DrivenTime> queryStudents(int id) async {
+  Future<DrivenTime> queryDrivenTime(int id) async {
     return _queryAdapter.query('SELECT * from student_driven_time WHERE id = ?',
         arguments: <dynamic>[id],
         mapper: (Map<String, dynamic> row) => DrivenTime(
@@ -250,8 +250,20 @@ class _$DrivenTimeDao extends DrivenTimeDao {
   }
 
   @override
-  Future<List<DrivenTime>> queryAllStudents() async {
+  Future<List<DrivenTime>> queryAllDrivenTimes() async {
     return _queryAdapter.queryList('SELECT * from student_driven_time',
+        mapper: (Map<String, dynamic> row) => DrivenTime(
+            row['id'] as int,
+            row['studentId'] as int,
+            _dateTimeConverter.decode(row['lesson_start_time'] as int),
+            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+  }
+
+  @override
+  Future<List<DrivenTime>> queryAllDrivenTimesByStudentId(int studentId) async {
+    return _queryAdapter.queryList(
+        'SELECT * from student_driven_time WHERE studentId = ?',
+        arguments: <dynamic>[studentId],
         mapper: (Map<String, dynamic> row) => DrivenTime(
             row['id'] as int,
             row['studentId'] as int,

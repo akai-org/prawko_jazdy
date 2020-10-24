@@ -8,10 +8,13 @@ abstract class DrivenTimeDao {
   Future<void> insertTime(DrivenTime drivenTime);
 
   @Query('SELECT * from student_driven_time WHERE id = :id')
-  Future<DrivenTime> queryStudents(int id);
+  Future<DrivenTime> queryDrivenTime(int id);
 
   @Query('SELECT * from student_driven_time')
-  Future<List<DrivenTime>> queryAllStudents();
+  Future<List<DrivenTime>> queryAllDrivenTimes();
+
+  @Query('SELECT * from student_driven_time WHERE studentId = :studentId')
+  Future<List<DrivenTime>> queryAllDrivenTimesByStudentId(int studentId);
 
   @floor.delete
   Future<void> delete(DrivenTime drivenTime);
