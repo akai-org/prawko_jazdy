@@ -198,8 +198,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
                   'studentId': item.studentId,
                   'lesson_start_time':
                       _dateTimeConverter.encode(item.lessonStartTime),
-                  'lesson_duration':
-                      _dateTimeConverter.encode(item.lessonDuration)
+                  'lesson_duration': item.lessonDuration
                 }),
         _drivenTimeUpdateAdapter = UpdateAdapter(
             database,
@@ -210,8 +209,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
                   'studentId': item.studentId,
                   'lesson_start_time':
                       _dateTimeConverter.encode(item.lessonStartTime),
-                  'lesson_duration':
-                      _dateTimeConverter.encode(item.lessonDuration)
+              'lesson_duration': item.lessonDuration
                 }),
         _drivenTimeDeletionAdapter = DeletionAdapter(
             database,
@@ -222,8 +220,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
                   'studentId': item.studentId,
                   'lesson_start_time':
                       _dateTimeConverter.encode(item.lessonStartTime),
-                  'lesson_duration':
-                      _dateTimeConverter.encode(item.lessonDuration)
+              'lesson_duration': item.lessonDuration
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -246,17 +243,18 @@ class _$DrivenTimeDao extends DrivenTimeDao {
             row['id'] as int,
             row['studentId'] as int,
             _dateTimeConverter.decode(row['lesson_start_time'] as int),
-            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+            row['lesson_duration'] as int));
   }
 
   @override
   Future<List<DrivenTime>> queryAllDrivenTimes() async {
     return _queryAdapter.queryList('SELECT * from student_driven_time',
-        mapper: (Map<String, dynamic> row) => DrivenTime(
-            row['id'] as int,
-            row['studentId'] as int,
-            _dateTimeConverter.decode(row['lesson_start_time'] as int),
-            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+        mapper: (Map<String, dynamic> row) =>
+            DrivenTime(
+                row['id'] as int,
+                row['studentId'] as int,
+                _dateTimeConverter.decode(row['lesson_start_time'] as int),
+                row['lesson_duration'] as int));
   }
 
   @override
@@ -264,11 +262,12 @@ class _$DrivenTimeDao extends DrivenTimeDao {
     return _queryAdapter.queryList(
         'SELECT * from student_driven_time WHERE studentId = ?',
         arguments: <dynamic>[studentId],
-        mapper: (Map<String, dynamic> row) => DrivenTime(
-            row['id'] as int,
-            row['studentId'] as int,
-            _dateTimeConverter.decode(row['lesson_start_time'] as int),
-            _dateTimeConverter.decode(row['lesson_duration'] as int)));
+        mapper: (Map<String, dynamic> row) =>
+            DrivenTime(
+                row['id'] as int,
+                row['studentId'] as int,
+                _dateTimeConverter.decode(row['lesson_start_time'] as int),
+                row['lesson_duration'] as int));
   }
 
   @override

@@ -15,6 +15,8 @@ class StudentDriverDetailsPage extends StatefulWidget {
 }
 
 class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
+  final DateTime now = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     final StudentDriverDetailsArgs args =
@@ -47,23 +49,28 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
               }
 
               StudentDriver student = snapshot.data[0];
-              List<DrivenTime> drivenTimesList = snapshot.data[1];
+              List<DrivenTime> drivenTimesList = snapshot.data[1].reversed
+                  .toList();
 
               return ListView.builder(
                 itemCount: drivenTimesList.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return Column(
-                      children: [
-                        Text(
-                          "${student.firstName} ${student.lastName}",
-                          style: TextStyle(fontSize: 32),
-                        ),
-                        Text("Liczba godzin -1")
-                      ],
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            "${student.firstName} ${student.lastName}",
+                            style: TextStyle(fontSize: 32),
+                          ),
+                          Text(_getDrivenText(drivenTimesList))
+                        ],
+                      ),
                     );
                   }
-                  return lessonTile(drivenTimesList, index);
+
+                  return _lessonTile(drivenTimesList[index - 1]);
                 },
               );
             },
@@ -74,10 +81,9 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
         onPressed: () async {
           final drivenTimeDao =
               (await StudentDriversDatabase.instance).drivenTimeDao;
-          final duration = DateTime.fromMicrosecondsSinceEpoch(1)
-              .add(Duration(hours: 1, minutes: 30));
 
-          var drivenTime = DrivenTime(null, args.id, DateTime(2020), duration);
+          var drivenTime = DrivenTime(
+              null, args.id, DateTime.now().add(Duration(minutes: 90)), 90);
           await drivenTimeDao.insertTime(drivenTime);
           setState(() {
             //empty to requery db
@@ -88,13 +94,90 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     );
   }
 
-  ListTile lessonTile(List<DrivenTime> drivenTimesList, int index) {
-    DrivenTime drivenTime = drivenTimesList[index - 1];
-    Duration duration = Duration(
-        milliseconds: drivenTime.lessonDuration.microsecondsSinceEpoch);
-    return ListTile(
-      title: Text(
-          "Start ${drivenTime.lessonStartTime}, duration: ${duration.inHours}"),
+  Widget _lessonTile(DrivenTime drivenTime) {
+    bool isLessonInPast = drivenTime.lessonStartTime.isBefore(now);
+    final textStyle = TextStyle(
+        color: isLessonInPast ? Colors.grey[700] : Colors.black,
+        fontSize: 16.0);
+    final hintStyle = TextStyle(
+        color: isLessonInPast ? Colors.grey[500] : Colors.grey[700],
+        fontSize: 14.0);
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 3),
+      color: isLessonInPast ? Colors.grey[100] : Colors.grey[300],
+      child: ListTile(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                      _getFormattedDate(drivenTime
+                          .lessonStartTime),
+                      style: textStyle
+                  ),
+                  Text(
+                      'Data',
+                      style: hintStyle
+                  ),
+                ]),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                      _getFormattedMinutes(drivenTime
+                          .lessonDuration),
+                      style: textStyle
+                  ),
+                  Text(
+                      'Czas trwania',
+                      style: hintStyle
+                  ),
+                ]),
+          ],
+        ),
+      ),
     );
+  }
+
+  String _getDrivenText(List<DrivenTime> drivenTimesList) {
+    int totalTimeSoFar = drivenTimesList
+        .where((element) => element.lessonStartTime.isBefore(now))
+        .fold(0, (value, element) => value + element.lessonDuration);
+    int hours = totalTimeSoFar ~/ 60;
+    int minutes = totalTimeSoFar % 60;
+
+    String hoursDrivenText = _getFormattedHours(hours);
+    String minutesDrivenText = "";
+    if (minutes > 0) minutesDrivenText = "i ${_getFormattedMinutes(minutes)}";
+
+    return "Wyjeżdzono $hoursDrivenText $minutesDrivenText";
+  }
+
+  String _getFormattedHours(int hours) {
+    String hoursDrivenText = "";
+    if (hours == 0 || hours >= 5)
+      hoursDrivenText += "$hours godzin";
+    else if (hours >= 1 && hours <= 4) hoursDrivenText += "$hours godziny";
+    return hoursDrivenText;
+  }
+
+  String _getFormattedMinutes(int minutes) {
+    String minutesDrivenText;
+    if (minutes == 0)
+      minutesDrivenText = "";
+    else if (minutes == 1)
+      minutesDrivenText = "$minutes minutę";
+    else if (minutes <= 4)
+      minutesDrivenText = "$minutes minuty";
+    else if (minutes >= 5) minutesDrivenText = "$minutes minut";
+    return minutesDrivenText;
+  }
+
+  String _getFormattedDate(DateTime date) {
+    return "${date.day}-${date.month}-${date.year}";
   }
 }
