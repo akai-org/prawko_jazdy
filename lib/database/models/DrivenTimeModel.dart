@@ -21,7 +21,7 @@ class DrivenTime {
   @ColumnInfo(name: 'lesson_start_time')
   final DateTime lessonStartTime;
   @ColumnInfo(name: 'lesson_duration')
-  final DateTime lessonDuration;
+  final int lessonDuration;
 
   DrivenTime(
       this.id, this.studentId, this.lessonStartTime, this.lessonDuration);
