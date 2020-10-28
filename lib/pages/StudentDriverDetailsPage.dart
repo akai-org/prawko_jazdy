@@ -24,7 +24,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Driver summary ${args.id}"),
+        title: Text("Driver summary"),
       ),
       body: FutureBuilder(
         future: StudentDriversDatabase.instance,
@@ -64,7 +64,12 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
                             "${student.firstName} ${student.lastName}",
                             style: TextStyle(fontSize: 32),
                           ),
-                          Text(_getDrivenText(drivenTimesList))
+                          Text(
+                            _getDrivenText(drivenTimesList),
+                            style: TextStyle(fontSize: 20.0),
+                          ),
+                          Text(_getFutureDrivesTimeText(drivenTimesList),
+                              style: TextStyle(fontSize: 20.0))
                         ],
                       ),
                     );
@@ -98,7 +103,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     bool isLessonInPast = drivenTime.lessonStartTime.isBefore(now);
     final textStyle = TextStyle(
         color: isLessonInPast ? Colors.grey[700] : Colors.black,
-        fontSize: 16.0);
+        fontSize: 20.0);
     final hintStyle = TextStyle(
         color: isLessonInPast ? Colors.grey[500] : Colors.grey[700],
         fontSize: 14.0);
@@ -157,6 +162,20 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     return "Wyjeżdzono $hoursDrivenText $minutesDrivenText";
   }
 
+  String _getFutureDrivesTimeText(List<DrivenTime> drivenTimesList) {
+    int totalTimeSoFar = drivenTimesList
+        .where((element) => element.lessonStartTime.isAfter(now))
+        .fold(0, (value, element) => value + element.lessonDuration);
+    int hours = totalTimeSoFar ~/ 60;
+    int minutes = totalTimeSoFar % 60;
+
+    String hoursDrivenText = _getFormattedHours(hours);
+    String minutesDrivenText = "";
+    if (minutes > 0) minutesDrivenText = "i ${_getFormattedMinutes(minutes)}";
+
+    return "Zaplanowano $hoursDrivenText $minutesDrivenText";
+  }
+
   String _getFormattedHours(int hours) {
     String hoursDrivenText = "";
     if (hours == 0 || hours >= 5)
@@ -178,6 +197,11 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   }
 
   String _getFormattedDate(DateTime date) {
-    return "${date.day}-${date.month}-${date.year}";
+    var hours = date.hour.toString().padLeft(2, "0");
+    var minutes = date.minute.toString().padLeft(2, "0");
+    var day = date.day.toString().padLeft(2, "0");
+    var month = date.month.toString().padLeft(2, "0");
+    var year = date.year;
+    return "$hours:$minutes $day-$month-$year";
   }
 }
