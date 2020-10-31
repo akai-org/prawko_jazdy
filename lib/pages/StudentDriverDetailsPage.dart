@@ -91,13 +91,12 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
           final drivenTimeDao =
               (await StudentDriversDatabase.instance).drivenTimeDao;
           var drivenTime = DrivenTime(
-              null, args.id, DateTime.now()/*.add(Duration(minutes: 90))*/, 2700);
+              null, args.id, DateTime.now()/*.add(Duration(minutes: 90))*/, 90);
 
           await drivenTimeDao.insertTime(drivenTime);
-          if(totalTimeSoFar + 2700 >= 2700) {
-            stderr.write("abc");
+          if(totalTimeSoFar + 90 >= 2700) {
             final studentDao = (await StudentDriversDatabase.instance).studentDao;
-            student.allHours = 1;
+            student.allHours = true;
             await studentDao.update(student);
           }
           setState(() {
@@ -159,7 +158,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   }
 
   String _getDrivenText(List<DrivenTime> drivenTimesList) {
-    int totalTimeSoFar = drivenTimesList
+    totalTimeSoFar = drivenTimesList
         .where((element) => element.lessonStartTime.isBefore(now))
         .fold(0, (value, element) => value + element.lessonDuration);
     int hours = totalTimeSoFar ~/ 60;
@@ -173,13 +172,13 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   }
 
   String _getFutureDrivesTimeText(List<DrivenTime> drivenTimesList) {
-    totalTimeSoFar = drivenTimesList
+    int futureTotalTimeSoFar = drivenTimesList
         .where((element) => element.lessonStartTime.isAfter(now))
         .fold(0, (value, element) => value + element.lessonDuration);
-    int hours = totalTimeSoFar ~/ 60;
-    int minutes = totalTimeSoFar % 60;
+    int hours = futureTotalTimeSoFar ~/ 60;
+    int minutes = futureTotalTimeSoFar % 60;
 
-    String hoursDrivenText = _getFormattedHours(hours);
+    String hoursDrivenText = _getFormattedHours(hours) + " '${totalTimeSoFar}'";
     String minutesDrivenText = "";
     if (minutes > 0) minutesDrivenText = "i ${_getFormattedMinutes(minutes)}";
 

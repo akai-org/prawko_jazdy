@@ -115,7 +115,8 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours': item.allHours
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 }),
         _studentDriverUpdateAdapter = UpdateAdapter(
             database,
@@ -126,7 +127,8 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours': item.allHours
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 }),
         _studentDriverDeletionAdapter = DeletionAdapter(
             database,
@@ -137,7 +139,8 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours': item.allHours
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -161,7 +164,7 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['first_name'] as String,
             row['last_name'] as String,
             row['category'] as String,
-            row['all_hours'] as int));
+            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
   }
 
   @override
@@ -172,7 +175,7 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['first_name'] as String,
             row['last_name'] as String,
             row['category'] as String,
-            row['all_hours'] as int));
+            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
   }
 
   @override
@@ -292,4 +295,3 @@ class _$DrivenTimeDao extends DrivenTimeDao {
 
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
-final _boolConverter = BoolConverter();
