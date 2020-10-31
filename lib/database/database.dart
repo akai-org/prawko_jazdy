@@ -37,7 +37,8 @@ class StudentDriversDatabase {
   });
 
   static final migration3to4 = Migration(3, 4, (database) async {
-    await database.execute("ALTER TABLE student_drivers ADD COLUMN all_hours DEFAULT = 0;");
+    await database.execute("ALTER TABLE student_drivers ADD COLUMN all_hours INTEGER;");
+    await database.execute("UPDATE student_drivers SET all_hours = 0;");
   });
 
   static Future<AppDatabase> get instance async {
