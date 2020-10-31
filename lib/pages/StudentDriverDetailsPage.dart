@@ -89,10 +89,10 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
           final drivenTimeDao =
               (await StudentDriversDatabase.instance).drivenTimeDao;
           var drivenTime = DrivenTime(
-              null, args.id, DateTime.now().add(Duration(minutes: 90)), 90);
+              null, args.id, DateTime.now()/*.add(Duration(minutes: 90))*/, 2700);
 
           await drivenTimeDao.insertTime(drivenTime);
-          if(totalTimeSoFar + 90 >= 2700) {
+          if(totalTimeSoFar + 2700 >= 2700) {
             final studentDao = (await StudentDriversDatabase.instance).studentDao;
             student.allHours = true;
             await studentDao.update(student);

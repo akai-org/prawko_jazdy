@@ -7,13 +7,14 @@ import 'package:sqflite/sqflite.dart' as sqflite;
 import 'package:synchronized/synchronized.dart';
 
 import 'converters/DateTimeConverter.dart';
+import 'converters/BoolConverter.dart';
 import 'models/StudentDriverModel.dart';
 import 'StudentDriversDao.dart';
 
 part 'database.g.dart'; // the generated code will be there
 
 
-@TypeConverters([DateTimeConverter])
+@TypeConverters([DateTimeConverter, BoolConverter])
 @Database(version:  4, entities: [StudentDriver, DrivenTime])
 abstract class AppDatabase extends FloorDatabase {
   StudentDriversDao get studentDao;

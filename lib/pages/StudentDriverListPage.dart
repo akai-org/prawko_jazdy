@@ -147,7 +147,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
 
   Widget studentTile(StudentDriver student) {
     var color = Colors.white;
-    if(student.allHours) color = Colors.green;
+    if(student.allHours == true) color = Colors.green;
     return ListTile(
         onTap: () {
           Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
@@ -163,7 +163,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
         Container(
         margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
         child: Text(
-            '${student.firstName} ${student.lastName}',
+            student.toString(),//'${student.firstName} ${student.lastName}',
             style: new TextStyle(
                 fontSize: 20.0
             ),
