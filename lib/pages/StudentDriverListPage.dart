@@ -108,7 +108,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           onPressed: () =>
           {
             _studentDao
-                .insertStudent(StudentDriver(null, "Jan", "Kowalski", "A", false)),
+                .insertStudent(StudentDriver(null, "Jan", "Kowalski", "A", 0)),
             Navigator.pushNamed(context, StudentDriverAddPage.routeName)
                 .then((_) => onReturnFromAddPage())
           },
@@ -147,7 +147,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
 
   Widget studentTile(StudentDriver student) {
     var color = Colors.white;
-    if(student.allHours == true) color = Colors.green;
+    if(student.allHours == 1) color = Colors.green;
     return ListTile(
         onTap: () {
           Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,

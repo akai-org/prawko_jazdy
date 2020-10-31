@@ -13,7 +13,7 @@ class StudentDriver {
   final String lastName;
   final String category;
   @ColumnInfo(name: 'all_hours')
-  bool allHours;
+  int allHours;
 
   StudentDriver(this.id, this.firstName, this.lastName, this.category, this.allHours);
 

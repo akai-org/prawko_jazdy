@@ -6,6 +6,8 @@ import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 
+import "dart:io";
+
 class StudentDriverDetailsPage extends StatefulWidget {
   static const routeName = '/studentDriver/details';
 
@@ -93,8 +95,9 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
 
           await drivenTimeDao.insertTime(drivenTime);
           if(totalTimeSoFar + 2700 >= 2700) {
+            stderr.write("abc");
             final studentDao = (await StudentDriversDatabase.instance).studentDao;
-            student.allHours = true;
+            student.allHours = 1;
             await studentDao.update(student);
           }
           setState(() {

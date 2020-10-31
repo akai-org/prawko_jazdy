@@ -67,7 +67,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 3,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
       },
@@ -115,8 +115,7 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours':
-                      item.allHours == null ? null : (item.allHours ? 1 : 0)
+                  'all_hours': item.allHours
                 }),
         _studentDriverUpdateAdapter = UpdateAdapter(
             database,
@@ -127,8 +126,7 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours':
-                      item.allHours == null ? null : (item.allHours ? 1 : 0)
+                  'all_hours': item.allHours
                 }),
         _studentDriverDeletionAdapter = DeletionAdapter(
             database,
@@ -139,8 +137,7 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'first_name': item.firstName,
                   'last_name': item.lastName,
                   'category': item.category,
-                  'all_hours':
-                      item.allHours == null ? null : (item.allHours ? 1 : 0)
+                  'all_hours': item.allHours
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -164,7 +161,7 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['first_name'] as String,
             row['last_name'] as String,
             row['category'] as String,
-            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
+            row['all_hours'] as int));
   }
 
   @override
@@ -175,7 +172,7 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['first_name'] as String,
             row['last_name'] as String,
             row['category'] as String,
-            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
+            row['all_hours'] as int));
   }
 
   @override
@@ -295,3 +292,4 @@ class _$DrivenTimeDao extends DrivenTimeDao {
 
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
+final _boolConverter = BoolConverter();
