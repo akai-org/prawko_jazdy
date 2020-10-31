@@ -12,11 +12,13 @@ class StudentDriver {
   @ColumnInfo(name: 'last_name')
   final String lastName;
   final String category;
+  @ColumnInfo(name: 'all_hours')
+  bool allHours;
 
-  StudentDriver(this.id, this.firstName, this.lastName, this.category);
+  StudentDriver(this.id, this.firstName, this.lastName, this.category, this.allHours);
 
   @override
   String toString() {
-    return '$id $firstName $lastName $category';
+    return '$id $firstName $lastName $category $allHours';
   }
 }
