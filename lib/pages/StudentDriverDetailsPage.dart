@@ -6,7 +6,6 @@ import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 
-import "dart:io";
 
 class StudentDriverDetailsPage extends StatefulWidget {
   static const routeName = '/studentDriver/details';
@@ -20,6 +19,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   final DateTime now = DateTime.now();
   int totalTimeSoFar = 0;
   StudentDriver student = null;
+  final int STUDENT_ALL_HOURS = 2700;
 
   @override
   Widget build(BuildContext context) {
@@ -91,10 +91,10 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
           final drivenTimeDao =
               (await StudentDriversDatabase.instance).drivenTimeDao;
           var drivenTime = DrivenTime(
-              null, args.id, DateTime.now()/*.add(Duration(minutes: 90))*/, 90);
+              null, args.id, DateTime.now().add(Duration(minutes: 90)), 90);
 
           await drivenTimeDao.insertTime(drivenTime);
-          if(totalTimeSoFar + 90 >= 2700) {
+          if(totalTimeSoFar + 90 >= STUDENT_ALL_HOURS) {
             final studentDao = (await StudentDriversDatabase.instance).studentDao;
             student.allHours = true;
             await studentDao.update(student);
@@ -178,7 +178,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     int hours = futureTotalTimeSoFar ~/ 60;
     int minutes = futureTotalTimeSoFar % 60;
 
-    String hoursDrivenText = _getFormattedHours(hours) + " '${totalTimeSoFar}'";
+    String hoursDrivenText = _getFormattedHours(hours);
     String minutesDrivenText = "";
     if (minutes > 0) minutesDrivenText = "i ${_getFormattedMinutes(minutes)}";
 
