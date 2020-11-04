@@ -67,7 +67,7 @@ class _$AppDatabase extends AppDatabase {
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 3,
+      version: 4,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
       },
@@ -82,7 +82,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `student_drivers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `category` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `student_drivers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `category` TEXT, `all_hours` INTEGER)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
@@ -114,7 +114,9 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'id': item.id,
                   'first_name': item.firstName,
                   'last_name': item.lastName,
-                  'category': item.category
+                  'category': item.category,
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 }),
         _studentDriverUpdateAdapter = UpdateAdapter(
             database,
@@ -124,7 +126,9 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'id': item.id,
                   'first_name': item.firstName,
                   'last_name': item.lastName,
-                  'category': item.category
+                  'category': item.category,
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 }),
         _studentDriverDeletionAdapter = DeletionAdapter(
             database,
@@ -134,7 +138,9 @@ class _$StudentDriversDao extends StudentDriversDao {
                   'id': item.id,
                   'first_name': item.firstName,
                   'last_name': item.lastName,
-                  'category': item.category
+                  'category': item.category,
+                  'all_hours':
+                      item.allHours == null ? null : (item.allHours ? 1 : 0)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -157,7 +163,8 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['id'] as int,
             row['first_name'] as String,
             row['last_name'] as String,
-            row['category'] as String));
+            row['category'] as String,
+            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
   }
 
   @override
@@ -167,7 +174,8 @@ class _$StudentDriversDao extends StudentDriversDao {
             row['id'] as int,
             row['first_name'] as String,
             row['last_name'] as String,
-            row['category'] as String));
+            row['category'] as String,
+            row['all_hours'] == null ? null : (row['all_hours'] as int) != 0));
   }
 
   @override
@@ -209,7 +217,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
                   'studentId': item.studentId,
                   'lesson_start_time':
                       _dateTimeConverter.encode(item.lessonStartTime),
-              'lesson_duration': item.lessonDuration
+                  'lesson_duration': item.lessonDuration
                 }),
         _drivenTimeDeletionAdapter = DeletionAdapter(
             database,
@@ -220,7 +228,7 @@ class _$DrivenTimeDao extends DrivenTimeDao {
                   'studentId': item.studentId,
                   'lesson_start_time':
                       _dateTimeConverter.encode(item.lessonStartTime),
-              'lesson_duration': item.lessonDuration
+                  'lesson_duration': item.lessonDuration
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -249,12 +257,11 @@ class _$DrivenTimeDao extends DrivenTimeDao {
   @override
   Future<List<DrivenTime>> queryAllDrivenTimes() async {
     return _queryAdapter.queryList('SELECT * from student_driven_time',
-        mapper: (Map<String, dynamic> row) =>
-            DrivenTime(
-                row['id'] as int,
-                row['studentId'] as int,
-                _dateTimeConverter.decode(row['lesson_start_time'] as int),
-                row['lesson_duration'] as int));
+        mapper: (Map<String, dynamic> row) => DrivenTime(
+            row['id'] as int,
+            row['studentId'] as int,
+            _dateTimeConverter.decode(row['lesson_start_time'] as int),
+            row['lesson_duration'] as int));
   }
 
   @override
@@ -262,12 +269,11 @@ class _$DrivenTimeDao extends DrivenTimeDao {
     return _queryAdapter.queryList(
         'SELECT * from student_driven_time WHERE studentId = ?',
         arguments: <dynamic>[studentId],
-        mapper: (Map<String, dynamic> row) =>
-            DrivenTime(
-                row['id'] as int,
-                row['studentId'] as int,
-                _dateTimeConverter.decode(row['lesson_start_time'] as int),
-                row['lesson_duration'] as int));
+        mapper: (Map<String, dynamic> row) => DrivenTime(
+            row['id'] as int,
+            row['studentId'] as int,
+            _dateTimeConverter.decode(row['lesson_start_time'] as int),
+            row['lesson_duration'] as int));
   }
 
   @override

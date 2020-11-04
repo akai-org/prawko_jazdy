@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:prawkojazdy/args/StudentDetailsArgs.dart';
@@ -58,11 +57,11 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           actions: isLoading
               ? null
               : [
-                  IconButton(
-                    icon: _searchIcon,
-                    onPressed: () => _searchPressed(),
-                  )
-                ],
+            IconButton(
+              icon: _searchIcon,
+              onPressed: () => _searchPressed(),
+            )
+          ],
         ),
         body: Center(
           child: Column(
@@ -70,18 +69,24 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
               children: <Widget>[
                 Builder(builder: (context) {
                   final search = _searchText.toLowerCase().split(' ');
-                  List filteredStudents = _searchText.isNotEmpty ? studentsList
-                      .where((element) {
+                  List filteredStudents = _searchText.isNotEmpty
+                      ? studentsList.where((element) {
                     if (search.length == 1) {
-                      return element.firstName.toLowerCase().startsWith(
-                          search[0]) ||
-                          element.lastName.toLowerCase().startsWith(search[0]);
+                      return element.firstName
+                          .toLowerCase()
+                          .startsWith(search[0]) ||
+                          element.lastName
+                              .toLowerCase()
+                              .startsWith(search[0]);
                     }
-                    return element.firstName.toLowerCase().startsWith(
-                        search[0]) &&
-                        element.lastName.toLowerCase().startsWith(search[1]);
-                  }
-                  ).toList() : studentsList;
+                    return element.firstName
+                        .toLowerCase()
+                        .startsWith(search[0]) &&
+                        element.lastName
+                            .toLowerCase()
+                            .startsWith(search[1]);
+                  }).toList()
+                      : studentsList;
 
                   if (isLoading) {
                     return Container(
@@ -103,7 +108,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           onPressed: () =>
           {
             _studentDao
-                .insertStudent(StudentDriver(null, "Jan", "Kowalski", "A")),
+                .insertStudent(StudentDriver(null, "Jan", "Kowalski", "A", false)),
             Navigator.pushNamed(context, StudentDriverAddPage.routeName)
                 .then((_) => onReturnFromAddPage())
           },
@@ -141,17 +146,34 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
   }
 
   Widget studentTile(StudentDriver student) {
+    var color = Colors.white;
+    if(student.allHours) color = Colors.green;
     return ListTile(
-      onTap: () {
-        Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
-            arguments: StudentDriverDetailsArgs(
-              student.id,
-            ));
-      },
-      title: Text(
-        '${student.firstName} ${student.lastName}',
-        maxLines: 1,
-      ),
+        onTap: () {
+          Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
+              arguments: StudentDriverDetailsArgs(
+                student.id,
+              ));
+        },
+        tileColor: color,
+        title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+
+            children: <Widget>[
+        Container(
+        margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
+        child: Text(
+            '${student.firstName} ${student.lastName}',
+            style: new TextStyle(
+                fontSize: 20.0
+            ),
+            maxLines: 1,
+        )),
+        Container(
+            margin: EdgeInsets.fromLTRB(16, 4, 16, 8),
+            child: Text('Kategoria: ${student.category}')
+        )
+    ])
     );
   }
 
@@ -204,9 +226,11 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           controller: _filter,
           autofocus: true,
           decoration: new InputDecoration(
-              prefixIcon: new Icon(Icons.search, color: Colors.black,),
-              hintText: 'Search...'
-          ),
+              prefixIcon: new Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+              hintText: 'Search...'),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);

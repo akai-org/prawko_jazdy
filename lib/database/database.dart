@@ -14,7 +14,7 @@ part 'database.g.dart'; // the generated code will be there
 
 
 @TypeConverters([DateTimeConverter])
-@Database(version:  3, entities: [StudentDriver, DrivenTime])
+@Database(version:  4, entities: [StudentDriver, DrivenTime])
 abstract class AppDatabase extends FloorDatabase {
   StudentDriversDao get studentDao;
   DrivenTimeDao get drivenTimeDao;
@@ -36,11 +36,16 @@ class StudentDriversDatabase {
     await database.execute("CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)");
   });
 
+  static final migration3to4 = Migration(3, 4, (database) async {
+    await database.execute("ALTER TABLE student_drivers ADD COLUMN all_hours INTEGER;");
+    await database.execute("UPDATE student_drivers SET all_hours = 0;");
+  });
+
   static Future<AppDatabase> get instance async {
     await lock.synchronized(() async {
       _instance ??=
           await $FloorAppDatabase.databaseBuilder('app_database.db')
-              .addMigrations([migration1to2, migration2to3])
+              .addMigrations([migration1to2, migration2to3, migration3to4])
               .build();
     });
     return _instance;
