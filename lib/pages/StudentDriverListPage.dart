@@ -6,6 +6,8 @@ import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 import 'package:prawkojazdy/pages/StudentDriverDetailsPage.dart';
 
+import 'package:prawkojazdy/database/DrivenTimeDao.dart';
+
 import 'StudentDriverAddPage.dart';
 
 class StudentDriverListPage extends StatefulWidget {
@@ -18,6 +20,7 @@ class StudentDriverListPage extends StatefulWidget {
 class _StudentDriverListState extends State<StudentDriverListPage> {
   Widget _appBarTitle = new Text('Students List');
   List studentsList = [];
+  DrivenTimeDao _drivenTimeDao;
   StudentDriversDao _studentDao;
   bool isLoading = true;
   final TextEditingController _filter = new TextEditingController();
@@ -202,10 +205,11 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
                 "Yes",
                 style: TextStyle(fontSize: 18),
               ),
-              onPressed: () {
+              onPressed: () async {
+                print(student);
+                await _drivenTimeDao.deleteAllByStudentId(student.id);
                 _studentDao.delete(student);
                 setState(() {
-                  // studentsList.remove(student);
                   studentsList = List.from(studentsList)
                     ..remove(student);
                 });
@@ -247,8 +251,11 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
 
     AppDatabase appDatabase = await StudentDriversDatabase.instance;
     _studentDao = appDatabase.studentDao;
+    _drivenTimeDao = appDatabase.drivenTimeDao;
 
     final tempStudentsList = await _studentDao.queryAllStudents();
+
+    print(tempStudentsList);
 
     setState(() {
       isLoading = false;

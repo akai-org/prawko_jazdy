@@ -16,6 +16,9 @@ abstract class DrivenTimeDao {
   @Query('SELECT * from student_driven_time WHERE studentId = :studentId')
   Future<List<DrivenTime>> queryAllDrivenTimesByStudentId(int studentId);
 
+  @Query('DELETE from student_driven_time WHERE studentId = :studentId')
+  Future<void> deleteAllByStudentId(int studentId);
+
   @floor.delete
   Future<void> delete(DrivenTime drivenTime);
 

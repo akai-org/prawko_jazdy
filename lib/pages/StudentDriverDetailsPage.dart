@@ -78,7 +78,6 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
                       ),
                     );
                   }
-
                   return _lessonTile(drivenTimesList[index - 1]);
                 },
               );
@@ -90,6 +89,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
         onPressed: () async {
           final drivenTimeDao =
               (await StudentDriversDatabase.instance).drivenTimeDao;
+
           var drivenTime = DrivenTime(
               null, args.id, DateTime.now().add(Duration(minutes: 90)), 90);
 

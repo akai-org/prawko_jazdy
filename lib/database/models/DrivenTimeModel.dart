@@ -11,6 +11,7 @@ import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
       childColumns: ['studentId'],
       parentColumns: ['id'],
       entity: StudentDriver,
+      onDelete: ForeignKeyAction.cascade
     )
   ]
 )

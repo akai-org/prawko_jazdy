@@ -84,7 +84,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `student_drivers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `category` TEXT, `all_hours` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -274,6 +274,13 @@ class _$DrivenTimeDao extends DrivenTimeDao {
             row['studentId'] as int,
             _dateTimeConverter.decode(row['lesson_start_time'] as int),
             row['lesson_duration'] as int));
+  }
+
+  @override
+  Future<void> deleteAllByStudentId(int studentId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE from student_driven_time WHERE studentId = ?',
+        arguments: <dynamic>[studentId]);
   }
 
   @override
