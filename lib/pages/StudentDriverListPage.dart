@@ -206,7 +206,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
                 style: TextStyle(fontSize: 18),
               ),
               onPressed: () async {
-                print(student);
+
                 await _drivenTimeDao.deleteAllByStudentId(student.id);
                 _studentDao.delete(student);
                 setState(() {
@@ -254,8 +254,6 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
     _drivenTimeDao = appDatabase.drivenTimeDao;
 
     final tempStudentsList = await _studentDao.queryAllStudents();
-
-    print(tempStudentsList);
 
     setState(() {
       isLoading = false;
