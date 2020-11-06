@@ -23,6 +23,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
   Icon _searchIcon = new Icon(Icons.search);
+  var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   _StudentDriverListState() {
     _filter.addListener(() {
@@ -120,29 +121,33 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
 
   Widget studentsListWidget(List students) {
     return Expanded(
-        child: ListView.builder(
-            itemCount: students.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Slidable(
-                  actionPane: SlidableDrawerActionPane(),
-                  actionExtentRatio: 0.25,
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () => showDeleteDialog(students[index]),
-                    ),
-                  ],
-                  child: Column(
-                    children: <Widget>[
-                      studentTile(students[index]),
-                      Divider(
-                        color: Colors.grey[300],
-                        height: 1,
-                      )
+        child: RefreshIndicator(
+          key: _refreshKey,
+          onRefresh: fetchStudents,
+          child: ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Slidable(
+                    actionPane: SlidableDrawerActionPane(),
+                    actionExtentRatio: 0.25,
+                    secondaryActions: <Widget>[
+                      IconSlideAction(
+                        color: Colors.red,
+                        icon: Icons.delete,
+                        onTap: () => showDeleteDialog(students[index]),
+                      ),
                     ],
-                  ));
-            }));
+                    child: Column(
+                      children: <Widget>[
+                        studentTile(students[index]),
+                        Divider(
+                          color: Colors.grey[300],
+                          height: 1,
+                        )
+                      ],
+                    ));
+              }),
+        ));
   }
 
   Widget studentTile(StudentDriver student) {
@@ -241,9 +246,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
   }
 
   Future<void> fetchStudents() async {
-    setState(() {
-      isLoading = true;
-    });
+    _refreshKey.currentState?.show();
 
     AppDatabase appDatabase = await StudentDriversDatabase.instance;
     _studentDao = appDatabase.studentDao;
@@ -251,7 +254,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
     final tempStudentsList = await _studentDao.queryAllStudents();
 
     setState(() {
-      isLoading = false;
+      if(isLoading) isLoading = false;
       studentsList = tempStudentsList;
     });
   }
