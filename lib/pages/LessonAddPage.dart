@@ -66,26 +66,6 @@ class _LessonAddPageState extends State<LessonAddPage> {
     );
   }
 
-  lessonDurationPicker() {
-    return Column(
-      children: [
-        Align(
-            alignment: Alignment.topLeft,
-            child: Text('Czas trwania',
-                style: TextStyle(fontSize: 18.0, color: Colors.grey[700])
-            )
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            hoursPicker(),
-            minutePicker()
-          ],
-        ),
-      ],
-    );
-  }
-
   validateForm () {
     if (selectedDate == null ||
         selectedTime == null ||
@@ -102,21 +82,41 @@ class _LessonAddPageState extends State<LessonAddPage> {
 
   confirmButton() {
     return RaisedButton(
-        child: Text(pageArgs.buttonText, style: TextStyle(fontSize: 18, color: Colors.white)),
-        onPressed: isValidate
-          ? () {
-            final lessonDurationInMinutes = (lessonHours * 60) + lessonMinutes;
-            final lessonStartTime = new DateTime(
-                selectedDate.year, selectedDate.month, selectedDate.day,
-                selectedTime.hour, selectedTime.minute
-            );
-            Navigator.pop(context, {
-              'lessonStartTime': lessonStartTime,
-              'lessonDuration': lessonDurationInMinutes
-            });
-          }
-          : null,
+      child: Text(pageArgs.buttonText, style: TextStyle(fontSize: 18, color: Colors.white)),
+      onPressed: isValidate
+        ? () {
+          final lessonDurationInMinutes = (lessonHours * 60) + lessonMinutes;
+          final lessonStartTime = new DateTime(
+              selectedDate.year, selectedDate.month, selectedDate.day,
+              selectedTime.hour, selectedTime.minute
+          );
+          Navigator.pop(context, {
+            'lessonStartTime': lessonStartTime,
+            'lessonDuration': lessonDurationInMinutes
+          });
+        }
+        : null,
       color: Colors.blue,
+    );
+  }
+
+  lessonDurationPicker() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.topLeft,
+          child: Text('Czas trwania',
+            style: TextStyle(fontSize: 18.0, color: Colors.grey[700])
+          )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            hoursPicker(),
+            minutePicker()
+          ],
+        ),
+      ],
     );
   }
 
@@ -124,21 +124,22 @@ class _LessonAddPageState extends State<LessonAddPage> {
     return Row(
       children: [
         DropdownButton<String>(
-            hint: Text("Godzin"),
-            value: lessonHours.toString(),
-        items: <String>['0', '1', '2', '3', '4', '5', '6']
+          hint: Text("Godzin"),
+          value: lessonHours.toString(),
+          items: <String>['0', '1', '2', '3', '4', '5', '6']
             .map((String value) {
-          return DropdownMenuItem<String>(
+            return DropdownMenuItem<String>(
             value: value,
             child: new Text(value, style: TextStyle(fontSize: 18.0)),
-          );
-        }).toList(),
-        onChanged: (value) {
-          setState(() {
-            lessonHours = int.parse(value);
-          });
-          validateForm();
-        }),
+            );
+            }).toList(),
+          onChanged: (value) {
+            setState(() {
+              lessonHours = int.parse(value);
+            });
+            validateForm();
+          }
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: Text('h', style: TextStyle(fontSize: 18.0)),
@@ -154,18 +155,19 @@ class _LessonAddPageState extends State<LessonAddPage> {
         hint: Text("Minut"),
         value: lessonMinutes.toString(),
         items: <String>['0', '15', '30', '45']
-            .map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: new Text(value, style: TextStyle(fontSize: 18.0)),
-          );
-        }).toList(),
+          .map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: new Text(value, style: TextStyle(fontSize: 18.0)),
+            );
+          }).toList(),
         onChanged: (value) {
           setState(() {
             lessonMinutes = int.parse(value);
           });
           validateForm();
-        }),
+        }
+      ),
       Padding(
         padding: const EdgeInsets.only(left: 8.0),
         child: Text('min', style: TextStyle(fontSize: 18.0)),

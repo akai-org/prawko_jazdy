@@ -138,9 +138,9 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                      _getFormattedDate(drivenTime
-                          .lessonStartTime),
-                      style: textStyle
+                    _getFormattedDate(drivenTime
+                        .lessonStartTime),
+                    style: textStyle
                   ),
                   Text(
                       'Data',
@@ -152,13 +152,13 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                      _getFormattedMinutes(drivenTime
-                          .lessonDuration),
-                      style: textStyle
+                    _getFormattedMinutes(drivenTime
+                        .lessonDuration),
+                    style: textStyle
                   ),
                   Text(
-                      'Czas trwania',
-                      style: hintStyle
+                    'Czas trwania',
+                    style: hintStyle
                   ),
                 ]),
           ],
@@ -193,9 +193,10 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
                       action.edit, drivenTime
                     ));
 
+                if (result == null) return;
+
                 if (result['lessonStartTime'] != drivenTime.lessonStartTime ||
                     result['lessonDuration'] != drivenTime.lessonDuration) {
-                  print('force update');
                   drivenTime = DrivenTime(
                       drivenTime.id,
                       drivenTime.studentId,
