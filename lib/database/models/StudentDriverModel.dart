@@ -7,15 +7,20 @@ import 'package:floor/floor.dart';
 class StudentDriver {
   @PrimaryKey(autoGenerate: true)
   final int id;
+
   @ColumnInfo(name: 'first_name')
   final String firstName;
+
   @ColumnInfo(name: 'last_name')
   final String lastName;
+
   final String category;
+
   @ColumnInfo(name: 'all_hours')
   bool allHours;
 
-  StudentDriver(this.id, this.firstName, this.lastName, this.category, this.allHours);
+  StudentDriver(
+      this.id, this.firstName, this.lastName, this.category, this.allHours);
 
   @override
   String toString() {

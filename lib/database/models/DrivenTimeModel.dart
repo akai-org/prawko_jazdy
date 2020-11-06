@@ -18,9 +18,12 @@ import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 class DrivenTime {
   @PrimaryKey(autoGenerate: true)
   final int id;
+
   final int studentId;
+
   @ColumnInfo(name: 'lesson_start_time')
   final DateTime lessonStartTime;
+
   @ColumnInfo(name: 'lesson_duration')
   final int lessonDuration;
 

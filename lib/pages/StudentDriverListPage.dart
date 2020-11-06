@@ -18,7 +18,8 @@ class StudentDriverListPage extends StatefulWidget {
 }
 
 class _StudentDriverListState extends State<StudentDriverListPage> {
-  Widget _appBarTitle = new Text('Students List');
+  final String title = 'Lista kursantów';
+  Widget _appBarTitle;
   List studentsList = [];
   DrivenTimeDao _drivenTimeDao;
   StudentDriversDao _studentDao;
@@ -44,6 +45,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
   @override
   void initState() {
     super.initState();
+    _appBarTitle = Text(title);
     fetchStudents();
   }
 
@@ -99,7 +101,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
 
                   if (filteredStudents.length == 0) {
                     return Center(
-                      child: Text('No Data Found'),
+                      child: Text('Nie znaleziono żadnych kursantów.'),
                     );
                   }
 
@@ -181,19 +183,16 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
   }
 
   void showDeleteDialog(StudentDriver student) {
-    // flutter defined function
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
-          title: Text("Delete ${student.firstName} ${student.lastName}"),
-          content: Text("Are sure to permanently delete this student?"),
+          title: Text("Usunąć ${student.firstName} ${student.lastName}?"),
+          content: Text("Jesteś pewien, że chcesz usunąć tego kursanta?"),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             FlatButton(
               child: Text(
-                "No",
+                "Nie",
                 style: TextStyle(fontSize: 18),
               ),
               onPressed: () {
@@ -202,11 +201,10 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
             ),
             FlatButton(
               child: Text(
-                "Yes",
+                "Tak",
                 style: TextStyle(fontSize: 18),
               ),
               onPressed: () async {
-
                 await _drivenTimeDao.deleteAllByStudentId(student.id);
                 _studentDao.delete(student);
                 setState(() {
@@ -234,11 +232,11 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
                 Icons.search,
                 color: Colors.black,
               ),
-              hintText: 'Search...'),
+              hintText: 'Szukaj...'),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text('Search Example');
+        this._appBarTitle = new Text(title);
         _filter.clear();
       }
     });
