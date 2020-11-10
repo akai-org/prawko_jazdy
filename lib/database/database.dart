@@ -33,7 +33,7 @@ class StudentDriversDatabase {
 
   static final migration2to3 = Migration(2, 3, (database) async {
     await database.execute("DROP TABLE student_driven_time");
-    await database.execute("CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE)");
+    await database.execute("CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)");
   });
 
   static final migration3to4 = Migration(3, 4, (database) async {
