@@ -84,7 +84,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `student_drivers` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `first_name` TEXT, `last_name` TEXT, `category` TEXT, `all_hours` INTEGER)');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE)');
+            'CREATE TABLE IF NOT EXISTS `student_driven_time` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `studentId` INTEGER, `lesson_start_time` INTEGER, `lesson_duration` INTEGER, FOREIGN KEY (`studentId`) REFERENCES `student_drivers` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
