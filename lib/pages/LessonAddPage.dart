@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:prawkojazdy/args/LessonAddPageArgs.dart';
 
 class LessonAddPage extends StatefulWidget {
@@ -178,6 +179,8 @@ class _LessonAddPageState extends State<LessonAddPage> {
 
   TextField timePickerField(BuildContext context) {
     return TextField(
+      onChanged: (_) => FocusScope.of(context).requestFocus(new FocusNode()),
+      enableInteractiveSelection: false,
       style: TextStyle(fontSize: 18.0),
       controller: timeFieldController,
       decoration: InputDecoration(labelText:'Czas rozpoczęcia'),
@@ -190,6 +193,8 @@ class _LessonAddPageState extends State<LessonAddPage> {
 
   TextField datePickerField(BuildContext context) {
     return TextField(
+      onChanged: (_) => FocusScope.of(context).requestFocus(new FocusNode()),
+      enableInteractiveSelection: false,
       style: TextStyle(fontSize: 18.0),
       controller: dateFieldController,
       decoration: InputDecoration(labelText:'Data'),
