@@ -209,10 +209,10 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     if (result == null) return;
 
     var drivenTime = DrivenTime(
-        null,
-        args.id,
-        result['lessonStartTime'],
-        result['lessonDuration']
+      null,
+      args.id,
+      result['lessonStartTime'],
+      result['lessonDuration']
     );
 
     await _drivenTimeDao.insertTime(drivenTime);
@@ -226,10 +226,10 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     if (result['lessonStartTime'] != drivenTime.lessonStartTime ||
         result['lessonDuration'] != drivenTime.lessonDuration) {
       drivenTime = DrivenTime(
-          drivenTime.id,
-          drivenTime.studentId,
-          result['lessonStartTime'],
-          result['lessonDuration']
+        drivenTime.id,
+        drivenTime.studentId,
+        result['lessonStartTime'],
+        result['lessonDuration']
       );
       await _drivenTimeDao.update(drivenTime);
     }

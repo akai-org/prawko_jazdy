@@ -114,9 +114,7 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-            _studentDao.insertStudent(
-                StudentDriver(null, "Jan", "Kowalski", "A", false)
-            ),
+
             Navigator.pushNamed(context, StudentDriverAddPage.routeName)
                 .then((_) => onReturnFromAddPage())
           },

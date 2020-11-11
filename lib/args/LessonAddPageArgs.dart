@@ -6,10 +6,10 @@ class LessonAddPageArgs {
   final action actionType;
   DrivenTime lessonToEdit;
 
-  final editTitleText = 'Edytuj lekcje';
+  final editTitleText = 'Edytuj lekcję';
   final editButtonText = 'Zatwierdź';
 
-  final addTitleText = 'Dodaj lekcje';
+  final addTitleText = 'Dodaj lekcję';
   final addButtonText = 'Dodaj';
 
   String get pageTitle {

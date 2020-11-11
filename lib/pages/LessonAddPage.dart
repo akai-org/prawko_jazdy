@@ -127,7 +127,6 @@ class _LessonAddPageState extends State<LessonAddPage> {
     return Row(
       children: [
         DropdownButton<String>(
-          hint: Text("Godzin"),
           value: lessonHours.toString(),
           items: hourPickerOptions
             .map((String value) {
@@ -156,7 +155,6 @@ class _LessonAddPageState extends State<LessonAddPage> {
   return Row(
     children: [
       DropdownButton<String>(
-        hint: Text("Minut"),
         value: lessonMinutes.toString(),
         items: minutePickerOptions
           .map((String value) {
