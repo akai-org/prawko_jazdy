@@ -277,6 +277,13 @@ class _$DrivenTimeDao extends DrivenTimeDao {
   }
 
   @override
+  Future<void> deleteAllByStudentId(int studentId) async {
+    await _queryAdapter.queryNoReturn(
+        'DELETE from student_driven_time WHERE studentId = ?',
+        arguments: <dynamic>[studentId]);
+  }
+
+  @override
   Future<void> insertTime(DrivenTime drivenTime) async {
     await _drivenTimeInsertionAdapter.insert(
         drivenTime, OnConflictStrategy.abort);
