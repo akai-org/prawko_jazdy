@@ -1,6 +1,5 @@
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
-
-enum action {add, edit}
+import 'actionTypeEnum.dart';
 
 class StudentAddPageArgs {
   final action actionType;

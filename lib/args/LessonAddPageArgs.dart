@@ -1,6 +1,5 @@
 import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
-
-enum action {add, edit}
+import 'actionTypeEnum.dart';
 
 class LessonAddPageArgs {
   final action actionType;

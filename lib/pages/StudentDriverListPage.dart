@@ -8,6 +8,7 @@ import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 import 'package:prawkojazdy/pages/StudentDriverDetailsPage.dart';
 
 import 'package:prawkojazdy/database/DrivenTimeDao.dart';
+import 'package:prawkojazdy/args/actionTypeEnum.dart';
 
 import 'StudentDriverAddPage.dart';
 
@@ -225,7 +226,8 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
         Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
           arguments: StudentDriverDetailsArgs(
             student.id,
-          ));
+            StudentDriverAddPage.routeName
+          )).then((_) => fetchStudents());
       },
       tileColor: color,
       title: Column(

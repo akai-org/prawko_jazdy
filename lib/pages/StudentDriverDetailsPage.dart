@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prawkojazdy/args/StudentAddPageArgs.dart';
 import 'package:prawkojazdy/args/StudentDetailsArgs.dart';
 import 'package:prawkojazdy/args/LessonAddPageArgs.dart';
 import 'package:prawkojazdy/database/DrivenTimeDao.dart';
@@ -7,6 +8,7 @@ import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 import 'package:prawkojazdy/pages/LessonAddPage.dart';
+import 'package:prawkojazdy/args/actionTypeEnum.dart';
 
 
 class StudentDriverDetailsPage extends StatefulWidget {
@@ -39,6 +41,24 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Profil kursanta"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () async {
+              StudentDriverDetailsArgs pageArgs = ModalRoute.of(context).
+                settings.arguments;
+              dynamic result = await Navigator.pushNamed(
+                  context,
+                  pageArgs.studentAddPageRoute,
+                  arguments: new StudentAddPageArgs.withStudentDriver(
+                    action.edit,
+                    student
+                  ),
+              );
+              await updateStudent(result, student);
+            },
+          )
+        ],
       ),
       body: Builder(
         builder: (context) {
@@ -79,6 +99,29 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
     );
   }
 
+  updateStudent(result, studentDriver) async {
+    // check if user has canceled the changes
+    if(result == null) return;
+
+    // check if user provide changes
+    if(result['firstName'] != studentDriver.firstName ||
+        result['lastName'] != studentDriver.lastName ||
+        result['category'] != studentDriver.category) {
+      studentDriver = new StudentDriver(
+          studentDriver.id,
+          result['firstName'],
+          result['lastName'],
+          result['category'],
+          studentDriver.allHours
+      );
+      await _studentDriversDao.update(studentDriver);
+
+      setState(() {
+        student = studentDriver;
+      });
+    }
+  }
+
   Padding _studentSummary() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 15.0),
@@ -89,7 +132,14 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
             style: TextStyle(fontSize: 32),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 12, 0, 6),
+            padding: const EdgeInsets.fromLTRB(0, 6, 0, 2),
+            child: Text(
+              "Kat. ${student.category}",
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
             child: Text(
               _getDrivenText(),
               style: TextStyle(fontSize: 20.0),
