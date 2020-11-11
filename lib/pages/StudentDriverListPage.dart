@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:prawkojazdy/args/StudentDetailsArgs.dart';
+import 'package:prawkojazdy/args/StudentAddPageArgs.dart';
 import 'package:prawkojazdy/database/StudentDriversDao.dart';
 import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
@@ -113,15 +114,32 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => {
-
-            Navigator.pushNamed(context, StudentDriverAddPage.routeName)
-                .then((_) => onReturnFromAddPage())
+          onPressed: () async {
+            dynamic result = await Navigator.pushNamed(
+                context,
+                StudentDriverAddPage.routeName,
+                arguments: new StudentAddPageArgs(action.add)
+            );
+            await insertStudent(result);
           },
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
+  }
+
+  insertStudent(result) async {
+    if (result == null) return;
+
+    final student = new StudentDriver(
+        null,
+        result['firstName'],
+        result['lastName'],
+        result['category'],
+        false
+    );
+    await _studentDao.insertStudent(student);
+    fetchStudents();
   }
 
   Widget studentsListWidget(List students) {
@@ -134,7 +152,28 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           itemBuilder: (BuildContext context, int index) {
             return Slidable(
               actionPane: SlidableDrawerActionPane(),
-              actionExtentRatio: 0.25,
+              actionExtentRatio: 0.20,
+              actions: [
+                IconSlideAction(
+                  color: Colors.blue,
+                  iconWidget: Icon(
+                    Icons.edit,
+                    size: 28.0, color:
+                    Colors.white
+                  ),
+                  onTap: () async {
+                    var studentToEdit = students[index];
+                    dynamic result = await Navigator.pushNamed(
+                        context,
+                        StudentDriverAddPage.routeName,
+                        arguments: StudentAddPageArgs.withStudentDriver(
+                            action.edit, studentToEdit
+                        )
+                    );
+                    await updateStudent(result, studentToEdit);
+                  },
+                ),
+              ],
               secondaryActions: <Widget>[
                 IconSlideAction(
                   color: Colors.red,
@@ -158,6 +197,26 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
     );
   }
 
+  updateStudent(result, studentDriver) async {
+    // check if user has canceled the changes
+    if(result == null) return;
+
+    // check if user provide changes
+    if(result['firstName'] != studentDriver.firstName ||
+      result['lastName'] != studentDriver.lastName ||
+      result['category'] != studentDriver.category) {
+      studentDriver = new StudentDriver(
+          studentDriver.id,
+          result['firstName'],
+          result['lastName'],
+          result['category'],
+          studentDriver.allHours
+      );
+      await _studentDao.update(studentDriver);
+      fetchStudents();
+    }
+  }
+
   Widget studentTile(StudentDriver student) {
     var color = Colors.white;
     if(student.allHours) color = Colors.green;
@@ -175,9 +234,9 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           Container(
           margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: Text(
-              '${student.firstName} ${student.lastName}',
-              style: new TextStyle(fontSize: 20.0),
-              maxLines: 1,
+            '${student.firstName} ${student.lastName}',
+            style: new TextStyle(fontSize: 20.0),
+            maxLines: 1,
             )
           ),
           Container(

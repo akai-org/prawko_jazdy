@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:prawkojazdy/args/StudentAddPageArgs.dart';
 
 class StudentDriverAddPage extends StatefulWidget {
   static const routeName = "/studentDriver/add";
@@ -16,13 +16,28 @@ class _StudentDriverAddPageState extends State<StudentDriverAddPage> {
   final firstNameFieldController = TextEditingController();
   final lastNameFieldController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final  validCharacters = RegExp(r'^[a-zA-Z]+$');
+  final  validCharacters = RegExp(r'^[AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnŃńOoÓóPpRrSsŚśTtUuWwYyZzŹźŻż]+$');
+  StudentAddPageArgs pageArgs;
+
+  getPageType() {
+    StudentAddPageArgs tmpPageArgs = ModalRoute.of(context).settings.arguments;
+    setState(() {
+      pageArgs = tmpPageArgs;
+
+      if(tmpPageArgs.actionType == action.edit) {
+        firstNameFieldController.text = tmpPageArgs.studentToEdit.firstName;
+        lastNameFieldController.text = tmpPageArgs.studentToEdit.lastName;
+        selectedCategory = tmpPageArgs.studentToEdit.category;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (pageArgs == null) getPageType();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Dodaj kursanta"),
+        title: Text(pageArgs.pageTitle),
       ),
 
       body: Padding(
@@ -78,13 +93,14 @@ class _StudentDriverAddPageState extends State<StudentDriverAddPage> {
 
   confirmButton() {
     return RaisedButton(
-      child: Text('Dodaj', style: TextStyle(fontSize: 18, color: Colors.white)),
+      child: Text(pageArgs.buttonText, style: TextStyle(fontSize: 18, color: Colors.white)),
       onPressed: () {
         if (_formKey.currentState.validate()) {
-          print(firstNameFieldController.text);
-          print(lastNameFieldController.text);
-          print(selectedCategory);
-          Navigator.pop(context);
+          Navigator.pop(context, {
+            'firstName': firstNameFieldController.text,
+            'lastName': lastNameFieldController.text,
+            'category': selectedCategory
+          });
         }
       },
       color: Colors.blue,
@@ -116,7 +132,3 @@ class _StudentDriverAddPageState extends State<StudentDriverAddPage> {
     );
   }
 }
-
-/*
- _studentDao.insertStudent(StudentDriver(null, "Jan", "Kowalski", "A", false));
-*/
