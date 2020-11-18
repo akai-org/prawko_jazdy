@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:prawkojazdy/args/StudentDetailsArgs.dart';
+import 'package:prawkojazdy/args/StudentAddPageArgs.dart';
 import 'package:prawkojazdy/database/StudentDriversDao.dart';
 import 'package:prawkojazdy/database/database.dart';
 import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 import 'package:prawkojazdy/pages/StudentDriverDetailsPage.dart';
 
 import 'package:prawkojazdy/database/DrivenTimeDao.dart';
+import 'package:prawkojazdy/args/actionTypeEnum.dart';
 
 import 'StudentDriverAddPage.dart';
 
@@ -61,62 +63,65 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
         appBar: AppBar(
           title: _appBarTitle,
           actions: isLoading
-              ? null
-              : [
-            IconButton(
-              icon: _searchIcon,
-              onPressed: () => _searchPressed(),
-            )
-          ],
+            ? null
+            : [
+              IconButton(
+                icon: _searchIcon,
+                onPressed: () => _searchPressed(),
+              )
+            ],
         ),
         body: Center(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Builder(builder: (context) {
-                  final search = _searchText.toLowerCase().split(' ');
-                  List filteredStudents = _searchText.isNotEmpty
-                      ? studentsList.where((element) {
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Builder(builder: (context) {
+                final search = _searchText.toLowerCase().split(' ');
+                List filteredStudents = _searchText.isNotEmpty
+                  ? studentsList.where((element) {
                     if (search.length == 1) {
                       return element.firstName
-                          .toLowerCase()
-                          .startsWith(search[0]) ||
+                        .toLowerCase()
+                        .startsWith(search[0]) ||
                           element.lastName
-                              .toLowerCase()
-                              .startsWith(search[0]);
+                            .toLowerCase()
+                            .startsWith(search[0]);
                     }
                     return element.firstName
-                        .toLowerCase()
-                        .startsWith(search[0]) &&
+                      .toLowerCase()
+                      .startsWith(search[0]) &&
                         element.lastName
-                            .toLowerCase()
-                            .startsWith(search[1]);
+                          .toLowerCase()
+                          .startsWith(search[1]);
                   }).toList()
-                      : studentsList;
+                  : studentsList;
 
-                  if (isLoading) {
-                    return Container(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+                if (isLoading) {
+                  return Container(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-                  if (filteredStudents.length == 0) {
-                    return Center(
-                      child: Text('Nie znaleziono żadnych kursantów.'),
-                    );
-                  }
+                if (filteredStudents.length == 0) {
+                  return Center(
+                    child: Text('Nie znaleziono żadnych kursantów.'),
+                  );
+                }
 
-                  return studentsListWidget(filteredStudents);
-                }),
-              ]),
+                return studentsListWidget(filteredStudents);
+              }
+              ),
+            ]
+          ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-          {
-            _studentDao
-                .insertStudent(StudentDriver(null, "Jan", "Kowalski", "A", false)),
-            Navigator.pushNamed(context, StudentDriverAddPage.routeName)
-                .then((_) => onReturnFromAddPage())
+          onPressed: () async {
+            dynamic result = await Navigator.pushNamed(
+                context,
+                StudentDriverAddPage.routeName,
+                arguments: new StudentAddPageArgs(action.add)
+            );
+            await insertStudent(result);
           },
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -124,66 +129,124 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
     );
   }
 
+  insertStudent(result) async {
+    if (result == null) return;
+
+    final student = new StudentDriver(
+        null,
+        result['firstName'],
+        result['lastName'],
+        result['category'],
+        false
+    );
+    await _studentDao.insertStudent(student);
+    fetchStudents();
+  }
+
   Widget studentsListWidget(List students) {
     return Expanded(
-        child: RefreshIndicator(
-          key: _refreshKey,
-          onRefresh: fetchStudents,
-          child: ListView.builder(
-              itemCount: students.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Slidable(
-                    actionPane: SlidableDrawerActionPane(),
-                    actionExtentRatio: 0.25,
-                    secondaryActions: <Widget>[
-                      IconSlideAction(
-                        color: Colors.red,
-                        icon: Icons.delete,
-                        onTap: () => showDeleteDialog(students[index]),
-                      ),
-                    ],
-                    child: Column(
-                      children: <Widget>[
-                        studentTile(students[index]),
-                        Divider(
-                          color: Colors.grey[300],
-                          height: 1,
+      child: RefreshIndicator(
+        key: _refreshKey,
+        onRefresh: fetchStudents,
+        child: ListView.builder(
+          itemCount: students.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Slidable(
+              actionPane: SlidableDrawerActionPane(),
+              actionExtentRatio: 0.20,
+              actions: [
+                IconSlideAction(
+                  color: Colors.blue,
+                  iconWidget: Icon(
+                    Icons.edit,
+                    size: 28.0, color:
+                    Colors.white
+                  ),
+                  onTap: () async {
+                    var studentToEdit = students[index];
+                    dynamic result = await Navigator.pushNamed(
+                        context,
+                        StudentDriverAddPage.routeName,
+                        arguments: StudentAddPageArgs.withStudentDriver(
+                            action.edit, studentToEdit
                         )
-                      ],
-                    ));
-              }),
-        ));
+                    );
+                    await updateStudent(result, studentToEdit);
+                  },
+                ),
+              ],
+              secondaryActions: <Widget>[
+                IconSlideAction(
+                  color: Colors.red,
+                  icon: Icons.delete,
+                  onTap: () => showDeleteDialog(students[index]),
+                ),
+              ],
+              child: Column(
+                children: <Widget>[
+                  studentTile(students[index]),
+                  Divider(
+                    color: Colors.grey[300],
+                    height: 1,
+                  )
+                ],
+              )
+            );
+          }
+        ),
+      )
+    );
+  }
+
+  updateStudent(result, studentDriver) async {
+    // check if user has canceled the changes
+    if(result == null) return;
+
+    // check if user provide changes
+    if(result['firstName'] != studentDriver.firstName ||
+      result['lastName'] != studentDriver.lastName ||
+      result['category'] != studentDriver.category) {
+      studentDriver = new StudentDriver(
+          studentDriver.id,
+          result['firstName'],
+          result['lastName'],
+          result['category'],
+          studentDriver.allHours
+      );
+      await _studentDao.update(studentDriver);
+      fetchStudents();
+    }
   }
 
   Widget studentTile(StudentDriver student) {
     var color = Colors.white;
     if(student.allHours) color = Colors.green;
     return ListTile(
-        onTap: () {
-          Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
-              arguments: StudentDriverDetailsArgs(
-                student.id,
-              ));
-        },
-        tileColor: color,
-        title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-
-            children: <Widget>[
-        Container(
-        margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
-        child: Text(
+      onTap: () {
+        Navigator.pushNamed(context, StudentDriverDetailsPage.routeName,
+          arguments: StudentDriverDetailsArgs(
+            student.id,
+            StudentDriverAddPage.routeName
+          )).then((_) => fetchStudents());
+      },
+      tileColor: color,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+          margin: EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Text(
             '${student.firstName} ${student.lastName}',
-            style: new TextStyle(
-                fontSize: 20.0
-            ),
+            style: new TextStyle(fontSize: 20.0),
             maxLines: 1,
-        )),
-        Container(
+            )
+          ),
+          Container(
             margin: EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Text('Kategoria: ${student.category}')
-        )
-    ])
+          )
+        ]
+      )
     );
   }
 
@@ -233,11 +296,12 @@ class _StudentDriverListState extends State<StudentDriverListPage> {
           controller: _filter,
           autofocus: true,
           decoration: new InputDecoration(
-              prefixIcon: new Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-              hintText: 'Szukaj...'),
+            prefixIcon: new Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            hintText: 'Szukaj...'
+          ),
         );
       } else {
         this._searchIcon = new Icon(Icons.search);

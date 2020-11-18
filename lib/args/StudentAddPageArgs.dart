@@ -1,14 +1,14 @@
-import 'package:prawkojazdy/database/models/DrivenTimeModel.dart';
+import 'package:prawkojazdy/database/models/StudentDriverModel.dart';
 import 'actionTypeEnum.dart';
 
-class LessonAddPageArgs {
+class StudentAddPageArgs {
   final action actionType;
-  DrivenTime lessonToEdit;
+  StudentDriver studentToEdit;
 
-  final editTitleText = 'Edytuj lekcję';
+  final editTitleText = 'Edytuj kursanta';
   final editButtonText = 'Zatwierdź';
 
-  final addTitleText = 'Dodaj lekcję';
+  final addTitleText = 'Dodaj kursanta';
   final addButtonText = 'Dodaj';
 
   String get pageTitle {
@@ -25,7 +25,7 @@ class LessonAddPageArgs {
       return editButtonText;
   }
 
-  LessonAddPageArgs.withDrivenTime(this.actionType, this.lessonToEdit);
+  StudentAddPageArgs.withStudentDriver(this.actionType, this.studentToEdit);
 
-  LessonAddPageArgs(this.actionType);
+  StudentAddPageArgs(this.actionType);
 }

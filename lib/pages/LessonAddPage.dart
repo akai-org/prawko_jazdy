@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:prawkojazdy/args/LessonAddPageArgs.dart';
+import 'package:prawkojazdy/args/actionTypeEnum.dart';
 
 class LessonAddPage extends StatefulWidget {
   static const routeName = "/studentDriever/addLesson";
@@ -19,6 +20,8 @@ class _LessonAddPageState extends State<LessonAddPage> {
   TextEditingController timeFieldController = TextEditingController();
   bool isValidate = false;
   LessonAddPageArgs pageArgs;
+  final minutePickerOptions = <String>['0', '15', '30', '45'];
+  final hourPickerOptions = <String>['0', '1', '2', '3', '4', '5', '6'];
 
   getPageType() {
     LessonAddPageArgs tmpPageArgs = ModalRoute.of(context).settings.arguments;
@@ -113,7 +116,7 @@ class _LessonAddPageState extends State<LessonAddPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            hoursPicker(),
+            hourPicker(),
             minutePicker()
           ],
         ),
@@ -121,13 +124,12 @@ class _LessonAddPageState extends State<LessonAddPage> {
     );
   }
 
-  hoursPicker() {
+  hourPicker() {
     return Row(
       children: [
         DropdownButton<String>(
-          hint: Text("Godzin"),
           value: lessonHours.toString(),
-          items: <String>['0', '1', '2', '3', '4', '5', '6']
+          items: hourPickerOptions
             .map((String value) {
             return DropdownMenuItem<String>(
             value: value,
@@ -149,13 +151,13 @@ class _LessonAddPageState extends State<LessonAddPage> {
     );
   }
 
+
   minutePicker() {
   return Row(
     children: [
       DropdownButton<String>(
-        hint: Text("Minut"),
         value: lessonMinutes.toString(),
-        items: <String>['0', '15', '30', '45']
+        items: minutePickerOptions
           .map((String value) {
             return DropdownMenuItem<String>(
               value: value,

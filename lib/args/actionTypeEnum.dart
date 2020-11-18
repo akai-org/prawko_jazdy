@@ -1,0 +1,2 @@
+
+enum action {add, edit}
