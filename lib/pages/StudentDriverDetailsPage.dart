@@ -29,7 +29,6 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   List<DrivenTime> drivenTimesList = [];
   StudentDriverDetailsArgs args;
   bool isLoading = true;
-  var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -62,7 +61,6 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
         ],
       ),
       body: RefreshIndicator(
-        key: _refreshKey,
         onRefresh: fetchStudentDrivenTime,
         child: Builder(
           builder: (context) {
