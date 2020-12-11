@@ -20,15 +20,16 @@ class StudentDriverDetailsPage extends StatefulWidget {
 }
 
 class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
-  final DateTime now = DateTime.now();
+  DateTime now = DateTime.now();
   int totalTimeSoFar = 0;
   StudentDriver student;
   final int studentAllHours = 2700;
   StudentDriversDao _studentDriversDao;
   DrivenTimeDao _drivenTimeDao;
-  bool isLoading = true;
   List<DrivenTime> drivenTimesList = [];
   StudentDriverDetailsArgs args;
+  bool isLoading = true;
+  var _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -60,23 +61,28 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
           )
         ],
       ),
-      body: Builder(
-        builder: (context) {
-          if (isLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
+      body: RefreshIndicator(
+        key: _refreshKey,
+        onRefresh: fetchStudentDrivenTime,
+        child: Builder(
+          builder: (context) {
 
-          return ListView.builder(
-            itemCount: drivenTimesList.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return _studentSummary();
-                }
-                return _lessonTile(drivenTimesList[index - 1]);
-              },
-            );
-          },
-        ),
+            if (isLoading) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            return ListView.builder(
+              itemCount: drivenTimesList.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return _studentSummary();
+                  }
+                  return _lessonTile(drivenTimesList[index - 1]);
+                },
+              );
+            },
+          ),
+      ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             dynamic result = await Navigator.pushNamed(
@@ -343,10 +349,7 @@ class _StudentDriverDetailsPageState extends State<StudentDriverDetailsPage> {
   }
 
   Future<void> fetchStudentDrivenTime() async {
-    setState(() {
-      isLoading = true;
-    });
-
+    now = DateTime.now();
     StudentDriverDetailsArgs tempArgs = ModalRoute.of(context).settings.arguments;
     AppDatabase appDatabase = await StudentDriversDatabase.instance;
     _studentDriversDao = appDatabase.studentDao;
